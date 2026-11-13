@@ -5,7 +5,7 @@
   "description": "Guardian child-safety backend: content analysis, alerts, screen-time policy and geofencing.",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "scripts": {
     "start": "node src/server.js",
@@ -17,7 +17,8 @@
     "analyze": "node scripts/analyze.js",
     "seed": "node scripts/seed-dev.js",
     "eval": "node scripts/eval.js",
-    "eval:claude": "for f in synthetic holdout fresh; do node scripts/eval.js --llm --review-all --file eval/$f.jsonl || exit 1; done"
+    "eval:claude": "for f in synthetic holdout fresh; do node scripts/eval.js --llm --review-all --file eval/$f.jsonl || exit 1; done",
+    "vercel-build": "node scripts/migrate.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.132.1",

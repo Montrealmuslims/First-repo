@@ -21,3 +21,12 @@ test('card verification checks the Stripe SetupIntent status', async () => {
 test('manual review cannot be self-asserted by parents', async () => {
   await assert.rejects(createConsentVerifier({ env: {} }).verify({ method: 'manual_review' }), /staff/);
 });
+
+test('family-only deployments can allow the consent checkbox in production', async () => {
+  await createConsentVerifier({ env: { NODE_ENV: 'production', ALLOW_SELF_ATTESTED_CONSENT: 'true' } })
+    .verify({ method: 'dev_attestation' });
+  await assert.rejects(
+    createConsentVerifier({ env: { NODE_ENV: 'production', ALLOW_SELF_ATTESTED_CONSENT: 'yes' } }).verify({ method: 'dev_attestation' }),
+    /not allowed/,
+  );
+});

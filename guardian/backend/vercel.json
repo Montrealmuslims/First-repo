@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run vercel-build",
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+  "crons": [{ "path": "/api/cron/retention", "schedule": "17 3 * * *" }],
+  "functions": {
+    "api/index.js": { "maxDuration": 30 },
+    "api/cron/retention.js": { "maxDuration": 60 }
+  }
+}

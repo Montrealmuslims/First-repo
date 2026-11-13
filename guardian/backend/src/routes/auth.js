@@ -29,8 +29,15 @@ const PushBody = z.object({ pushToken: z.string().max(4096).nullable() });
 export function authRouter({ fieldCrypto, authLimiter }) {
   const router = Router();
 
+  // Private deployments: only these emails may create accounts.
+  const allowed = (process.env.SIGNUP_ALLOWED_EMAILS ?? '')
+    .split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+
   router.post('/signup', authLimiter, async (req, res) => {
     const body = parse(SignupBody, req.body);
+    if (allowed.length && !allowed.includes(body.email)) {
+      throw new HttpError(403, 'Sign-up is restricted on this server');
+    }
     const passwordHash = await hashPassword(body.password);
 
     const result = await withTransaction(async (db) => {

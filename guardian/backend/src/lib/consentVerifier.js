@@ -4,7 +4,9 @@
 // Implemented methods:
 //   card_verification — the parent completes a Stripe SetupIntent in the client
 //                       (a card check, no charge); we confirm it succeeded.
-//   dev_attestation   — checkbox only. Refused when NODE_ENV=production.
+//   dev_attestation   — checkbox only. Refused when NODE_ENV=production unless
+//                       ALLOW_SELF_ATTESTED_CONSENT=true (private, family-only
+//                       deployments where the parent is the operator).
 //
 // Other FTC-accepted methods (signed form review, ID check, video call) are
 // manual: an admin verifies and records them with method 'manual_review'.
@@ -18,7 +20,7 @@ export function createConsentVerifier({ env = process.env, fetchImpl = fetch } =
     async verify({ method, verificationRef }) {
       switch (method) {
         case 'dev_attestation':
-          if (env.NODE_ENV === 'production') {
+          if (env.NODE_ENV === 'production' && env.ALLOW_SELF_ATTESTED_CONSENT !== 'true') {
             throw new HttpError(400, 'dev_attestation is not allowed in production');
           }
           return;

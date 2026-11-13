@@ -1,10 +1,14 @@
 import pg from 'pg';
 
 export const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
+  // DATABASE_URL, or POSTGRES_URL as set by the Neon ↔ Vercel integration.
+  connectionString: process.env.DATABASE_URL ?? process.env.POSTGRES_URL,
   // Require TLS to the database outside local development.
   ssl: process.env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: true },
-  max: 10,
+  // Serverless (Vercel) runs many small instances: keep each pool small and
+  // use the provider's pooled connection string.
+  max: Number(process.env.PG_POOL_MAX) || 10,
+  idleTimeoutMillis: 10_000,
 });
 
 export async function withTransaction(fn) {
