@@ -33,9 +33,9 @@ await page.click('button[type=submit]');
 step('wizard: consent');
 await page.getByText('تأكيد الموافقة').waitFor();
 await shot('02-consent');
-const checks = page.locator('form input[type=checkbox]');
-await checks.nth(3).check(); // llm_analysis — leave on to show the option
-await checks.nth(3).uncheck();
+const llmScope = page.locator('label.check:has-text("التحليل بالذكاء الاصطناعي") input');
+await llmScope.check();
+await llmScope.uncheck(); // optional third-party scope stays off
 await page.locator('label.check:has-text("أخبرت طفلي") input').check();
 await page.locator('label.check:has-text("ولي أمر هذا الطفل") input').check();
 await page.click('text=تأكيد الموافقة');
@@ -62,6 +62,8 @@ console.log('  ', await j('POST', '/v1/device/locations', { points: [
   { lat: 24.7136, lng: 46.6753, accuracyM: 12, batteryPct: 64, recordedAt: new Date(now - 300e3).toISOString() },
 ] }, paired.deviceToken));
 
+console.log('  ', await j('POST', '/v1/device/heartbeat', { lockCapable: true, appVersion: '1.0.0' }, paired.deviceToken));
+
 step('home');
 await page.goto(WEB);
 await page.getByText('سارة').first().waitFor();
@@ -76,8 +78,23 @@ await page.getByText('ماذا أفعل؟').waitFor();
 await shot('06-alert-detail');
 await page.click('text=تمت المعالجة');
 await page.getByText('إعادة فتح').waitFor();
+step('lock the phone from the dashboard');
+await page.click('text=العودة');
+await page.getByText('قفل جهاز سارة').waitFor();
+await page.getByPlaceholder('رسالة للطفل (اختياري)، مثل: وقت النوم').fill('وقت النوم');
+await page.getByRole('button', { name: 'قفل 30 دقيقة' }).click();
+await page.getByRole('button', { name: 'فتح القفل' }).waitFor();
+await shot('06b-locked');
+const hb = await j('POST', '/v1/device/heartbeat', { lockCapable: true, appVersion: '1.0.0' }, paired.deviceToken);
+console.log('   device sees lock:', JSON.stringify(hb.lock));
+if (!hb.lock.locked || hb.lock.message !== 'وقت النوم') throw new Error('device did not receive the lock');
+await page.getByRole('button', { name: 'فتح القفل' }).click();
+await page.getByRole('button', { name: 'قفل 30 دقيقة' }).waitFor();
+const hb2 = await j('POST', '/v1/device/heartbeat', { lockCapable: true, appVersion: '1.0.0' }, paired.deviceToken);
+if (hb2.lock.locked) throw new Error('device still locked after unlock');
+console.log('   unlocked ✓');
+
 step('location tab');
-await page.goBack();
 const childUrl = page.url().split('?')[0];
 await page.goto(`${childUrl}?tab=location`);
 await page.getByText('الوصول والمغادرة').waitFor();

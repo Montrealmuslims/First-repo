@@ -14,6 +14,7 @@ import { settingsRouter, filterRulesRouter } from './routes/settings.js';
 import { alertsRouter } from './routes/alerts.js';
 import { accountsRouter, oauthCallbackRouter } from './routes/accounts.js';
 import { privacyRouter } from './routes/privacy.js';
+import { lockRouter } from './routes/lock.js';
 
 /**
  * @param {object} deps
@@ -62,6 +63,7 @@ export function createApp({ fieldCrypto, notifier, classify, classifyBatch = nul
   parent.use(alertsRouter({ fieldCrypto }));
   parent.use(accountsRouter({ fieldCrypto, fetchImpl }));
   parent.use(privacyRouter({ fieldCrypto }));
+  parent.use(lockRouter());
   app.use('/v1', parent);
 
   app.use((_req, _res, next) => next(new HttpError(404, 'Not found')));

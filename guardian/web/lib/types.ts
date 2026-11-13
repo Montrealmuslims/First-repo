@@ -5,7 +5,11 @@ export interface Me {
   id: string; email: string; fullName: string; mfaEnabled: boolean;
   familyId: string; familyName: string; timezone: string; role: 'owner' | 'guardian';
 }
-export interface Child { id: string; displayName: string; birthYear: number; newAlerts?: number; devices?: number; scopes?: string[] }
+export interface Child { id: string; displayName: string; birthYear: number; newAlerts?: number; devices?: number; scopes?: string[]; locked?: boolean }
+export interface LockInfo {
+  locked: boolean; lockedUntil: string | null; message: string | null; consented: boolean;
+  devices: { id: string; model: string | null; lockCapable: boolean | null; lastSeenAt: string | null }[];
+}
 export interface AlertSummary {
   id: string; source: string; direction: string; category: string; severity: Severity;
   confidence: number; rationaleAr: string | null; status: AlertStatus; occurredAt: string; createdAt: string;

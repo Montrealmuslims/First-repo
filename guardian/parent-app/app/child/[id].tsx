@@ -5,6 +5,7 @@ import { useAuth } from '../../src/auth';
 import { useTheme } from '../../src/theme';
 import { SeverityBadge } from '../../src/ui';
 import { CATEGORY_LABELS, SOURCE_LABELS, STATUS_LABELS, formatDate } from '../../src/labels';
+import { LockCard, type LockInfo } from '../../src/LockCard';
 
 interface Alert { id: string; source: string; direction: string; category: string; severity: string; rationaleAr: string | null; status: string; occurredAt: string }
 interface Location {
@@ -21,22 +22,26 @@ export default function ChildScreen() {
   const [filter, setFilter] = useState('new');
   const [alerts, setAlerts] = useState<Alert[] | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
+  const [lock, setLock] = useState<LockInfo | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
     const q = filter === 'all' ? '' : `?status=${filter}`;
-    const [a, l] = await Promise.all([
+    const [a, l, k] = await Promise.all([
       api<{ alerts: Alert[] }>('GET', `/children/${id}/alerts${q}`),
       api<Location>('GET', `/children/${id}/location`),
+      api<LockInfo>('GET', `/children/${id}/lock`),
     ]);
     setAlerts(a.alerts);
     setLocation(l);
+    setLock(k);
   }, [api, id, filter]);
 
   useFocusEffect(useCallback(() => { load().catch(() => {}); }, [load]));
 
   const header = (
     <View style={{ gap: 12 }}>
+      <LockCard childId={id} info={lock} onChange={() => load().catch(() => {})} />
       <View style={s.card}>
         <Text style={s.h2}>الموقع</Text>
         {location?.latest ? (

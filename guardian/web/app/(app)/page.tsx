@@ -25,7 +25,10 @@ export default async function HomePage() {
             <Link key={c.id} href={`/children/${c.id}`} className="card" style={{ color: 'inherit', textDecoration: 'none' }}>
               <div className="row spread">
                 <h2 style={{ margin: 0 }}>{c.displayName}</h2>
-                {c.newAlerts ? <span className="badge sev sev-critical">{c.newAlerts} جديد</span> : <span className="badge">لا تنبيهات جديدة</span>}
+                <span className="row">
+                  {c.locked && <span className="badge">🔒 مقفل</span>}
+                  {c.newAlerts ? <span className="badge sev sev-critical">{c.newAlerts} جديد</span> : <span className="badge">لا تنبيهات جديدة</span>}
+                </span>
               </div>
               <p className="muted small" style={{ marginTop: '0.5rem' }}>
                 {year - c.birthYear} سنة · {c.devices ? `${c.devices} جهاز مرتبط` : 'لا يوجد جهاز مرتبط'}

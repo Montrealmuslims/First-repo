@@ -10,7 +10,7 @@ export const POLICY_VERSION = process.env.NEXT_PUBLIC_POLICY_VERSION ?? '2026-10
 export function ConsentForm({ childId, childName, initialScopes, onDone }: {
   childId: string; childName: string; initialScopes?: string[]; onDone: () => void;
 }) {
-  const [scopes, setScopes] = useState<string[]>(initialScopes ?? ['content_monitoring', 'location', 'screen_time']);
+  const [scopes, setScopes] = useState<string[]>(initialScopes ?? ['content_monitoring', 'location', 'screen_time', 'device_lock']);
   const [accepted, setAccepted] = useState(false);
   const [childNotified, setChildNotified] = useState(false);
   const [error, setError] = useState<string | null>(null);

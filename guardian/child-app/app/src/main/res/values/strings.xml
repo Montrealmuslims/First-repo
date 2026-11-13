@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Guardian</string>
+
+    <!-- Pairing -->
+    <string name="pair_title">ربط هذا الجهاز</string>
+    <string name="pair_intro">اطلب من والدك أو والدتك إنشاء رمز ربط من لوحة Guardian، ثم امسح رمز QR بالكاميرا أو اكتب الرمز هنا.</string>
+    <string name="pair_code_hint">رمز الربط (8 أرقام)</string>
+    <string name="pair_server_hint">عنوان الخادم</string>
+    <string name="pair_button">ربط</string>
+    <string name="pair_failed">تعذّر الربط: %1$s</string>
+    <string name="pair_invalid_code">الرمز غير صحيح أو انتهت صلاحيته. اطلب رمزاً جديداً.</string>
+
+    <!-- Setup -->
+    <string name="setup_title">خطوتان للتفعيل</string>
+    <string name="setup_notifications">1. السماح بالإشعارات، ليظهر لك متى قُفل الجهاز ولماذا.</string>
+    <string name="setup_notifications_button">السماح بالإشعارات</string>
+    <string name="setup_admin">2. السماح لـ Guardian بقفل الشاشة. هذه الصلاحية تسمح بقفل الشاشة فقط، ولا تسمح بمسح الجهاز أو تغيير كلمة المرور.</string>
+    <string name="setup_admin_button">السماح بقفل الشاشة</string>
+    <string name="setup_done">تم ✓</string>
+
+    <!-- Status / transparency -->
+    <string name="status_connected">هذا الجهاز مرتبط بـ Guardian باسم %1$s.</string>
+    <string name="status_what_title">ما الذي يفعله هذا التطبيق</string>
+    <string name="status_what_lock">• يستطيع والداك قفل شاشة هذا الجهاز مؤقتاً، وستعرف دائماً متى قُفل ومتى ينتهي القفل.</string>
+    <string name="status_what_not">• لا يقرأ هذا التطبيق رسائلك، ولا يرى صورك، ولا يتتبع موقعك.</string>
+    <string name="status_emergency">• مكالمات الطوارئ متاحة دائماً من شاشة القفل.</string>
+    <string name="status_no_consent">ميزة القفل غير مفعّلة من حساب والديك.</string>
+    <string name="status_locked_until">الجهاز مقفل من والديك حتى %1$s.</string>
+    <string name="status_locked_forever">الجهاز مقفل من والديك حتى يفتحاه.</string>
+    <string name="status_unlocked">الجهاز غير مقفل.</string>
+    <string name="status_last_check">آخر تحقق: %1$s</string>
+    <string name="status_offline">لا يوجد اتصال بالخادم الآن.</string>
+    <string name="status_disconnected">أُلغي ربط هذا الجهاز من حساب والديك.</string>
+
+    <!-- Notifications -->
+    <string name="channel_status">حالة Guardian</string>
+    <string name="channel_lock">قفل الجهاز</string>
+    <string name="notif_active">Guardian متصل · يستطيع والداك قفل هذا الجهاز</string>
+    <string name="notif_locked_title">🔒 قفل والداك هذا الجهاز</string>
+    <string name="notif_locked_until">حتى %1$s</string>
+    <string name="notif_locked_forever">حتى يفتحاه</string>
+
+    <!-- Device admin -->
+    <string name="admin_label">Guardian: قفل الشاشة</string>
+    <string name="admin_description">يسمح لوالديك بقفل شاشة هذا الجهاز عن بُعد. لا يسمح بمسح الجهاز أو تغيير كلمة المرور.</string>
+    <string name="admin_explanation">سيتمكن والداك من قفل الشاشة عن بُعد. ستظهر لك دائماً رسالة توضح ذلك.</string>
+</resources>

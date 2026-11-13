@@ -27,7 +27,7 @@ const ids = await withTransaction(async (db) => {
   );
   await db.query(
     `INSERT INTO consents (child_id, parent_id, policy_version, scopes, method, child_notified)
-     VALUES ($1, $2, '2026-10', '{content_monitoring,location,screen_time,llm_analysis}', 'dev_seed', true)`,
+     VALUES ($1, $2, '2026-10', '{content_monitoring,location,screen_time,device_lock,llm_analysis}', 'dev_seed', true)`,
     [childId, parentId],
   );
   await db.query(

@@ -7,11 +7,17 @@ import { hashToken, generateToken } from '../lib/fieldCrypto.js';
 import { evaluateGeofence } from '../lib/geo.js';
 import { parse, z, isoDate, latitude, longitude } from '../lib/validate.js';
 import { processTextItems, processImageSignals, IMAGE_LABELS } from '../services/alerts.js';
+import { lockStatus } from './lock.js';
 
 export const SOURCES = ['sms', 'email', 'instagram', 'tiktok', 'snapchat', 'whatsapp', 'discord', 'youtube', 'web', 'other'];
 const MAX_BATCH = 100;
 
 const direction = z.enum(['incoming', 'outgoing']);
+
+const HeartbeatBody = z.object({
+  lockCapable: z.boolean(),
+  appVersion: z.string().max(30).optional(),
+});
 
 const PairBody = z.object({
   code: z.string().regex(/^\d{8}$/, 'expected an 8-digit code'),
@@ -90,6 +96,24 @@ export function deviceRouter({ fieldCrypto, notifier, classify, classifyBatch, p
   router.get('/me', async (req, res) => {
     const { rows: [child] } = await pool.query('SELECT display_name FROM children WHERE id = $1', [req.device.childId]);
     res.json({ deviceId: req.device.id, displayName: child.display_name, scopes: req.device.scopes });
+  });
+
+  /**
+   * POST /v1/device/heartbeat  { lockCapable, appVersion? }
+   * Called by the child app every ~30 s while the screen is on (and when it
+   * turns on). Reports whether the app can lock the screen; returns what the
+   * device should enforce. Lock state is only returned with device_lock consent.
+   */
+  router.post('/heartbeat', async (req, res) => {
+    const body = parse(HeartbeatBody, req.body);
+    await pool.query(
+      'UPDATE devices SET lock_capable = $2, app_version = COALESCE($3, app_version) WHERE id = $1',
+      [req.device.id, body.lockCapable, body.appVersion ?? null],
+    );
+    const { rows: [child] } = await pool.query(
+      'SELECT display_name, locked_until, lock_message, locked_at FROM children WHERE id = $1', [req.device.childId]);
+    const lock = req.device.scopes.includes('device_lock') ? lockStatus(child) : lockStatus({});
+    res.json({ displayName: child.display_name, scopes: req.device.scopes, lock, serverTime: new Date().toISOString() });
   });
 
   /**

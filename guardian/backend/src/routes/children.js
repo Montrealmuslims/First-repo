@@ -8,7 +8,7 @@ import { hashToken } from '../lib/fieldCrypto.js';
 import { CONSENT_METHODS } from '../lib/consentVerifier.js';
 import { parse, z, uuid } from '../lib/validate.js';
 
-export const CONSENT_SCOPES = ['content_monitoring', 'location', 'screen_time', 'llm_analysis'];
+export const CONSENT_SCOPES = ['content_monitoring', 'location', 'screen_time', 'device_lock', 'llm_analysis'];
 export const CURRENT_POLICY_VERSION = process.env.PRIVACY_POLICY_VERSION || '2026-10';
 const PAIRING_TTL_MINUTES = 10;
 const ALERT_CATEGORIES = ['self_harm', 'bullying', 'grooming', 'violence', 'drugs', 'explicit_content'];
@@ -50,6 +50,7 @@ export function childrenRouter({ consentVerifier }) {
       `SELECT ch.id, ch.display_name AS "displayName", ch.birth_year AS "birthYear",
               (SELECT count(*)::int FROM alerts a WHERE a.child_id = ch.id AND a.status = 'new') AS "newAlerts",
               (SELECT count(*)::int FROM devices d WHERE d.child_id = ch.id AND d.revoked_at IS NULL) AS "devices",
+              (ch.locked_until IS NOT NULL AND ch.locked_until > now()) AS "locked",
               COALESCE((SELECT array_agg(DISTINCT s) FROM consents c, unnest(c.scopes) s
                         WHERE c.child_id = ch.id AND c.revoked_at IS NULL), '{}') AS "scopes"
          FROM children ch
@@ -163,7 +164,8 @@ export function childrenRouter({ consentVerifier }) {
 
   router.get('/children/:childId/devices', async (req, res) => {
     const { rows } = await pool.query(
-      `SELECT id, platform, model, app_version AS "appVersion", enrolled_at AS "enrolledAt", last_seen_at AS "lastSeenAt"
+      `SELECT id, platform, model, app_version AS "appVersion", enrolled_at AS "enrolledAt", last_seen_at AS "lastSeenAt",
+              lock_capable AS "lockCapable"
          FROM devices WHERE child_id = $1 AND revoked_at IS NULL ORDER BY enrolled_at`,
       [req.params.childId],
     );

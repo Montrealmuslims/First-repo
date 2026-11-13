@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pair_title">Connect this device</string>
+    <string name="pair_intro">Ask your parent to create a pairing code in the Guardian dashboard, then scan the QR code with your camera or type the code here.</string>
+    <string name="pair_code_hint">Pairing code (8 digits)</string>
+    <string name="pair_server_hint">Server address</string>
+    <string name="pair_button">Connect</string>
+    <string name="pair_failed">Could not connect: %1$s</string>
+    <string name="pair_invalid_code">The code is wrong or expired. Ask for a new one.</string>
+    <string name="setup_title">Two steps to finish</string>
+    <string name="setup_notifications">1. Allow notifications, so you always see when and why the device is locked.</string>
+    <string name="setup_notifications_button">Allow notifications</string>
+    <string name="setup_admin">2. Allow Guardian to lock the screen. This only allows locking the screen. It cannot erase the device or change your password.</string>
+    <string name="setup_admin_button">Allow screen lock</string>
+    <string name="setup_done">Done ✓</string>
+    <string name="status_connected">This device is connected to Guardian as %1$s.</string>
+    <string name="status_what_title">What this app does</string>
+    <string name="status_what_lock">• Your parents can lock this device\'s screen for a while. You will always see when it is locked and until when.</string>
+    <string name="status_what_not">• This app does not read your messages, see your photos or track your location.</string>
+    <string name="status_emergency">• Emergency calls always work from the lock screen.</string>
+    <string name="status_no_consent">Locking is not turned on in your parent\'s account.</string>
+    <string name="status_locked_until">Your parents locked this device until %1$s.</string>
+    <string name="status_locked_forever">Your parents locked this device until they unlock it.</string>
+    <string name="status_unlocked">The device is not locked.</string>
+    <string name="status_last_check">Last checked: %1$s</string>
+    <string name="status_offline">No connection to the server right now.</string>
+    <string name="status_disconnected">This device was disconnected from your parent\'s account.</string>
+    <string name="channel_status">Guardian status</string>
+    <string name="channel_lock">Device lock</string>
+    <string name="notif_active">Guardian is connected · your parents can lock this device</string>
+    <string name="notif_locked_title">🔒 Your parents locked this device</string>
+    <string name="notif_locked_until">Until %1$s</string>
+    <string name="notif_locked_forever">Until they unlock it</string>
+    <string name="admin_label">Guardian: screen lock</string>
+    <string name="admin_description">Lets your parents lock this device\'s screen remotely. It cannot erase the device or change your password.</string>
+    <string name="admin_explanation">Your parents will be able to lock the screen remotely. You will always see a message saying so.</string>
+</resources>

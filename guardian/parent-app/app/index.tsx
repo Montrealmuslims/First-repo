@@ -5,7 +5,7 @@ import { useAuth } from '../src/auth';
 import { useTheme } from '../src/theme';
 import { Loading } from '../src/ui';
 
-interface Child { id: string; displayName: string; birthYear: number; newAlerts: number; devices: number; scopes: string[] }
+interface Child { id: string; displayName: string; birthYear: number; newAlerts: number; devices: number; scopes: string[]; locked: boolean }
 
 export default function ChildrenScreen() {
   const { token, ready, api, logout } = useAuth();
@@ -48,7 +48,7 @@ export default function ChildrenScreen() {
           <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: '/child/[id]', params: { id: item.id, name: item.displayName } })}
                      style={({ pressed }) => [s.card, { opacity: pressed ? 0.8 : 1 }]}>
             <View style={[s.row, { justifyContent: 'space-between' }]}>
-              <Text style={s.h2}>{item.displayName}</Text>
+              <Text style={s.h2}>{item.locked ? '🔒 ' : ''}{item.displayName}</Text>
               {item.newAlerts > 0 ? (
                 <View style={[s.badge, { backgroundColor: '#c0392b' }]}><Text style={s.badgeText}>{item.newAlerts} جديد</Text></View>
               ) : <Text style={s.muted}>لا تنبيهات جديدة</Text>}

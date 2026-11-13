@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { formatDate } from '@/lib/labels';
 import type {
-  AlertSetting, AlertSummary, Child, Consent, DailyLimit, Device, Geofence, LinkedAccount, LocationInfo, Me, Schedule,
+  AlertSetting, AlertSummary, Child, Consent, DailyLimit, Device, Geofence, LinkedAccount, LocationInfo, LockInfo, Me, Schedule,
 } from '@/lib/types';
 import { AlertList } from '@/components/AlertList';
 import { PairingCode } from '@/components/PairingCode';
@@ -13,6 +13,7 @@ import { LimitsEditor } from '@/components/child/LimitsEditor';
 import { GeofencesEditor } from '@/components/child/GeofencesEditor';
 import { AccountsPanel } from '@/components/child/AccountsPanel';
 import { ConsentPanel } from '@/components/child/ConsentPanel';
+import { LockControl } from '@/components/child/LockControl';
 
 const TABS = {
   alerts: 'التنبيهات',
@@ -38,13 +39,14 @@ export default async function ChildPage({ params, searchParams }: {
   const { id } = await params;
   const sp = await searchParams;
   const tab: Tab = (sp.tab && sp.tab in TABS ? sp.tab : sp.gmail ? 'accounts' : 'alerts') as Tab;
-  const child = await api<Child>(`/children/${id}`);
+  const [child, lock] = await Promise.all([api<Child>(`/children/${id}`), api<LockInfo>(`/children/${id}/lock`)]);
   const base = `/children/${id}`;
 
   return (
     <>
       <p className="small"><Link href="/">→ كل الأطفال</Link></p>
       <h1>{child.displayName}</h1>
+      <LockControl childId={id} childName={child.displayName} info={lock} />
       <nav className="tabs" aria-label="أقسام">
         {Object.entries(TABS).map(([key, label]) => (
           <Link key={key} href={`${base}?tab=${key}`} className="tab" aria-current={tab === key ? 'page' : undefined}>{label}</Link>
