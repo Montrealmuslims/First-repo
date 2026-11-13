@@ -1,0 +1,153 @@
+GUARDIAN - SETUP INSTRUCTIONS (private family use, Vercel + Neon)
+===================================================================
+
+What you get
+------------
+- Parent dashboard (website)        -> runs on Vercel
+- API server (the phones talk to it) -> runs on Vercel
+- Database                           -> Neon (free)
+- Child phone app (Android)          -> child-phone-app/guardian-child.apk in this zip
+
+Everything fits in the free plans of Vercel and Neon for one family.
+Time needed: about 20-30 minutes.
+
+
+STEP 1 - Put the code on GitHub (GitHub Desktop)
+-------------------------------------------------
+1. Unzip this file into a new folder, for example:  Documents\Guardian
+2. Open GitHub Desktop -> File -> Add local repository -> choose that folder.
+3. It says "This directory does not appear to be a Git repository".
+   Click "create a repository" -> Create repository.
+4. Click "Publish repository".
+   - Pick your account or organization (for example tawasul-Libya).
+   - KEEP "Keep this code private" TICKED.
+   - Click Publish repository.
+
+
+STEP 2 - Make two random secret keys
+------------------------------------
+You need two random values. To make one without any tools:
+1. Open any website in Chrome or Edge, press F12, click the "Console" tab.
+2. Paste this line and press Enter:
+
+   btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
+
+3. Copy the result. Do it twice:
+   - KEY 1 -> for GUARDIAN_DATA_KEYS
+   - KEY 2 -> for CRON_SECRET
+
+IMPORTANT: Save KEY 1 somewhere safe (password manager).
+If you lose it, the saved alert messages can no longer be read.
+
+
+STEP 3 - Create the API project on Vercel
+-----------------------------------------
+1. vercel.com -> Add New... -> Project -> import the repository you just published.
+2. Root Directory: click "Edit" and choose   guardian/backend
+3. Framework Preset: Other   (leave build settings as they are)
+4. Open "Environment Variables" and add these (Name = Value):
+
+   NODE_ENV                     = production
+   GUARDIAN_DATA_KEYS           = k1:KEY1          (write k1: then paste KEY 1, no spaces)
+   CRON_SECRET                  = KEY2
+   SIGNUP_ALLOWED_EMAILS        = your email (and your spouse's), separated by commas
+   ALLOW_SELF_ATTESTED_CONSENT  = true
+   PG_POOL_MAX                  = 3
+
+   (Optional) ANTHROPIC_API_KEY = your Claude API key, to let Claude review messages.
+
+5. Click Deploy. The FIRST deploy will fail with "DATABASE_URL is not set".
+   That is expected - the database comes next.
+
+6. In this Vercel project: Storage tab -> Connect Database -> choose Neon
+   (create a new Neon database or pick your existing one) -> connect it to
+   all environments (Production, Preview, Development).
+
+7. Deployments tab -> click the three dots on the latest deployment -> Redeploy.
+   This time it creates the database tables automatically and succeeds.
+
+8. Check it works: open   https://YOUR-API-PROJECT.vercel.app/healthz
+   You should see:  {"ok":true}
+
+   Write down this address (without /healthz). This is YOUR API ADDRESS.
+   Use the main ".vercel.app" address shown on the project page,
+   NOT a long preview link with random letters.
+
+
+STEP 4 - Create the dashboard project on Vercel
+-----------------------------------------------
+1. vercel.com -> Add New... -> Project -> import the SAME repository again.
+2. Root Directory:  guardian/web     (Framework: Next.js is detected automatically)
+3. Environment Variables:
+
+   API_URL                      = YOUR API ADDRESS   (e.g. https://guardian-api-abc.vercel.app)
+   NEXT_PUBLIC_API_PUBLIC_URL   = YOUR API ADDRESS   (same value)
+
+   No slash at the end.
+4. Click Deploy. When done, open the address Vercel shows. That's your
+   dashboard: YOUR DASHBOARD ADDRESS.
+
+
+STEP 5 - Connect the two projects
+---------------------------------
+1. Go back to the API project -> Settings -> Environment Variables.
+2. Add:   WEB_APP_URL = YOUR DASHBOARD ADDRESS
+3. Deployments -> three dots on the latest -> Redeploy.
+
+
+STEP 6 - Create your account and add your child
+-----------------------------------------------
+1. Open YOUR DASHBOARD ADDRESS -> Sign up, using an email you put in
+   SIGNUP_ALLOWED_EMAILS. Other emails are refused (so strangers can't join).
+2. Recommended: Account settings -> turn on two-step login.
+3. Click "+ اضافة طفل" (Add child) -> name and birth year -> Next.
+4. Consent screen: make sure "قفل الجهاز عن بعد" (remote device lock) is ticked,
+   tick the two confirmation boxes, then confirm.
+5. Click "انشاء رمز ربط" (Create pairing code). A QR code and an 8-digit code
+   appear. They are valid for 10 minutes.
+
+
+STEP 7 - Set up your child's phone (Android 8 or newer)
+-------------------------------------------------------
+1. Copy  child-phone-app/guardian-child.apk  to the phone (USB, Google Drive,
+   WhatsApp to yourself...) and open it. Allow "install unknown apps" when asked.
+2. Open the phone's CAMERA and point it at the QR code on your dashboard.
+   Tap the link -> Guardian opens with the code and server filled in -> tap "ربط" (Connect).
+   (No camera? Type the 8-digit code, and in the server box type YOUR API ADDRESS.)
+3. In the app:
+   - tap "السماح بالاشعارات" (allow notifications)
+   - tap "السماح بقفل الشاشة" (allow screen lock) -> Activate
+4. Tell your child what the app does - it shows them the same explanation.
+
+
+STEP 8 - Test the lock
+----------------------
+1. Dashboard -> click your child -> "قفل 30 دقيقة" (lock 30 minutes),
+   optionally with a message like "Bedtime".
+2. Within about 30 seconds the phone locks and shows the message on the
+   lock screen. Emergency calls still work.
+3. Click "فتح القفل" (unlock) to unlock.
+
+
+Good to know
+------------
+- On your own phone, open YOUR DASHBOARD ADDRESS in the browser and use
+  "Add to Home screen" - it works like an app.
+- The lock applies within ~30 seconds while the child's screen is on, and
+  immediately when they turn the screen on.
+- A determined child can turn off the "screen lock" permission in Settings and
+  uninstall the app. You will see a red warning on the lock card and the phone
+  stops showing as recently connected. For stronger control, also use Google
+  Family Link (free), which can block uninstalling apps.
+- The APK in this zip is a test ("debug") build. It works fine for family use.
+- Updates: change the code, commit and push in GitHub Desktop -> Vercel
+  redeploys both projects automatically.
+- Old data is deleted automatically every day (alerts after 90 days,
+  locations after 30 days).
+- More details: guardian/docs/DEPLOY_VERCEL.md and guardian/child-app/README.md
+
+
+If something fails
+------------------
+Open the failed deployment in Vercel -> "Build Logs" or "Runtime Logs",
+copy the red error message and send it to Claude.
