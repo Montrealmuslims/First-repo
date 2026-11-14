@@ -4,7 +4,7 @@ import { isSameOriginRequest } from '@/lib/csrf';
 
 // Paths the browser may reach through the proxy. Device and auth-mutation
 // endpoints are not exposed here.
-const ALLOWED = /^(children|alerts|filter-rules|me|auth\/(me|mfa\/(setup|enable|disable)|logout-others))(\/|$)/;
+const ALLOWED = /^(children|alerts|filter-rules|family|me|auth\/(me|mfa\/(setup|enable|disable)|logout-others))(\/|$)/;
 
 type Ctx = { params: Promise<{ path: string[] }> };
 

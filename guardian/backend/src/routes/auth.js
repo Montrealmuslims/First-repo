@@ -22,7 +22,12 @@ const SignupBody = z.object({
   locale: z.enum(['ar', 'en']).optional(),
 });
 
-const LoginBody = z.object({ email, password: z.string().max(200), totp: z.string().optional() });
+// `email` carries the login identifier: an email address or a username.
+const LoginBody = z.object({
+  email: z.string().trim().min(1).max(254).transform((v) => v.toLowerCase()),
+  password: z.string().max(200),
+  totp: z.string().optional(),
+});
 const TotpBody = z.object({ code: z.string() });
 const PushBody = z.object({ pushToken: z.string().max(4096).nullable() });
 
@@ -63,7 +68,8 @@ export function authRouter({ fieldCrypto, authLimiter }) {
   router.post('/login', authLimiter, async (req, res) => {
     const body = parse(LoginBody, req.body);
     const { rows } = await pool.query(
-      `SELECT id, password_hash, mfa_enabled, mfa_secret_enc FROM parents WHERE email = $1 AND deleted_at IS NULL`,
+      `SELECT id, password_hash, mfa_enabled, mfa_secret_enc FROM parents
+        WHERE ${body.email.includes('@') ? 'email' : 'username'} = $1 AND deleted_at IS NULL`,
       [body.email],
     );
     const parent = rows[0];
@@ -102,7 +108,7 @@ export function authRouter({ fieldCrypto, authLimiter }) {
 
   router.get('/me', async (req, res) => {
     const { rows: [me] } = await pool.query(
-      `SELECT p.id, p.email, p.full_name AS "fullName", p.locale, p.mfa_enabled AS "mfaEnabled",
+      `SELECT p.id, p.email, p.username, p.full_name AS "fullName", p.locale, p.mfa_enabled AS "mfaEnabled",
               f.id AS "familyId", f.name AS "familyName", f.timezone, fm.role
          FROM parents p
          JOIN family_members fm ON fm.parent_id = p.id
@@ -115,11 +121,11 @@ export function authRouter({ fieldCrypto, authLimiter }) {
 
   /** Step 1: generate a secret (stored encrypted, not active yet). */
   router.post('/mfa/setup', async (req, res) => {
-    const { rows: [p] } = await pool.query('SELECT email, mfa_enabled FROM parents WHERE id = $1', [req.parent.id]);
+    const { rows: [p] } = await pool.query('SELECT COALESCE(email, username) AS login, mfa_enabled FROM parents WHERE id = $1', [req.parent.id]);
     if (p.mfa_enabled) throw new HttpError(409, 'MFA is already enabled');
     const secret = generateSecret();
     await pool.query('UPDATE parents SET mfa_secret_enc = $2 WHERE id = $1', [req.parent.id, fieldCrypto.encrypt(secret, req.parent.id)]);
-    res.json({ secret, otpauthUrl: otpauthUrl(secret, p.email) });
+    res.json({ secret, otpauthUrl: otpauthUrl(secret, p.login) });
   });
 
   /** Step 2: confirm a code from the authenticator app to activate MFA. */

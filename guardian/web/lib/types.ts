@@ -2,7 +2,7 @@ export type Severity = 'low' | 'medium' | 'high' | 'critical';
 export type AlertStatus = 'new' | 'viewed' | 'resolved' | 'dismissed';
 
 export interface Me {
-  id: string; email: string; fullName: string; mfaEnabled: boolean;
+  id: string; email: string | null; username: string | null; fullName: string; mfaEnabled: boolean;
   familyId: string; familyName: string; timezone: string; role: 'owner' | 'guardian';
 }
 export interface Child { id: string; displayName: string; birthYear: number; newAlerts?: number; devices?: number; scopes?: string[]; locked?: boolean }
@@ -28,4 +28,7 @@ export interface DailyLimit { target: 'app' | 'web_category'; value: string; min
 export interface AlertSetting { category: string; enabled: boolean; minSeverity: Severity }
 export interface LinkedAccount { id: string; provider: string; connectedAt: string; lastSyncedAt: string | null; lastError: string | null; disconnectedAt: string | null }
 export interface Consent { id: string; scopes: string[]; method: string; policyVersion: string; grantedAt: string; revokedAt: string | null }
+export interface FamilyMember {
+  id: string; fullName: string; email: string | null; username: string | null; role: 'owner' | 'guardian'; mfaEnabled: boolean; isYou: boolean;
+}
 export interface FilterRule { id: string; childId: string | null; target: 'domain' | 'web_category' | 'app'; value: string; action: 'allow' | 'block' }

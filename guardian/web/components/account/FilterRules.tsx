@@ -5,6 +5,7 @@ import { call } from '@/lib/client';
 import { WEB_CATEGORIES } from '@/lib/labels';
 import type { Child, FilterRule } from '@/lib/types';
 import { useAction } from '../useAction';
+import { NotYetOnDevice } from '../NotYetOnDevice';
 
 export function FilterRules({ rules, kids }: { rules: FilterRule[]; kids: Child[] }) {
   const { run, busy, error } = useAction();
@@ -20,7 +21,8 @@ export function FilterRules({ rules, kids }: { rules: FilterRule[]; kids: Child[
   return (
     <div className="card stack" id="filters">
       <h2>تصفية الويب</h2>
-      <p className="muted small">تُطبَّق على أجهزة Android عبر فلتر DNS محلي. قاعدة خاصة بطفل تتقدم على قاعدة العائلة.</p>
+      <NotYetOnDevice />
+      <p className="muted small">قاعدة خاصة بطفل تتقدم على قاعدة العائلة.</p>
 
       <h3>فئات محظورة</h3>
       <div className="row">

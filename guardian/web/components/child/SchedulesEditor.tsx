@@ -4,6 +4,7 @@ import { call } from '@/lib/client';
 import { DAY_LABELS } from '@/lib/labels';
 import type { Schedule } from '@/lib/types';
 import { useAction } from '../useAction';
+import { NotYetOnDevice } from '../NotYetOnDevice';
 
 const MODE_LABELS = { block_internet: 'إيقاف الإنترنت', allowlist_only: 'المسموح فقط' };
 
@@ -27,7 +28,8 @@ export function SchedulesEditor({ childId, schedules }: { childId: string; sched
   return (
     <div className="card">
       <h3>جداول وقت الشاشة</h3>
-      <p className="muted small">تُطبَّق على جهاز الطفل حتى بدون اتصال. الجدول الذي ينتهي بعد منتصف الليل (مثلاً من 21:30 إلى 06:30) مدعوم.</p>
+      <NotYetOnDevice />
+      <p className="muted small">للقفل الآن استخدم زر «قفل» أعلى الصفحة. الجدول الذي ينتهي بعد منتصف الليل (مثلاً من 21:30 إلى 06:30) مدعوم.</p>
       {schedules.length > 0 && (
         <ul className="list">
           {schedules.map((s) => (

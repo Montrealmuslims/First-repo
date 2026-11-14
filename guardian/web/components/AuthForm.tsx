@@ -4,11 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const ERRORS: Record<string, string> = {
-  'Invalid email or password': 'البريد أو كلمة المرور غير صحيحة.',
+  'Invalid email or password': 'البريد/اسم المستخدم أو كلمة المرور غير صحيحة.',
   'MFA code required': 'أدخل رمز التحقق من تطبيق المصادقة.',
   'Invalid MFA code': 'رمز التحقق غير صحيح.',
   'An account with this email already exists': 'يوجد حساب بهذا البريد.',
   'Too many requests, try again later': 'محاولات كثيرة. حاول بعد قليل.',
+  'Sign-up is restricted on this server': 'التسجيل مغلق على هذا الخادم. اطلب من صاحب الحساب إضافتك من «العائلة».',
 };
 
 export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
@@ -47,8 +48,9 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         </div>
       )}
       <div className="field">
-        <label htmlFor="email">البريد الإلكتروني</label>
-        <input id="email" name="email" type="email" required autoComplete="email" className="ltr" />
+        <label htmlFor="email">{mode === 'login' ? 'البريد الإلكتروني أو اسم المستخدم' : 'البريد الإلكتروني'}</label>
+        <input id="email" name="email" type={mode === 'login' ? 'text' : 'email'} required className="ltr"
+               autoComplete={mode === 'login' ? 'username' : 'email'} autoCapitalize="none" spellCheck={false} />
       </div>
       <div className="field">
         <label htmlFor="password">كلمة المرور</label>

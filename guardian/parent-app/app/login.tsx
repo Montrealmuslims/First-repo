@@ -7,7 +7,7 @@ import { useTheme } from '../src/theme';
 import { Button } from '../src/ui';
 
 const ERRORS: Record<string, string> = {
-  'Invalid email or password': 'البريد أو كلمة المرور غير صحيحة.',
+  'Invalid email or password': 'البريد/اسم المستخدم أو كلمة المرور غير صحيحة.',
   'MFA code required': 'أدخل رمز التحقق من تطبيق المصادقة.',
   'Invalid MFA code': 'رمز التحقق غير صحيح.',
   'Too many requests, try again later': 'محاولات كثيرة. حاول بعد قليل.',
@@ -46,8 +46,8 @@ export default function LoginScreen() {
         <Text style={[s.muted, { textAlign: 'center', marginBottom: 16 }]}>تنبيهات السلامة الرقمية لأطفالك</Text>
         <View style={s.card}>
           <Text style={s.h2}>تسجيل الدخول</Text>
-          <TextInput style={s.input} placeholder="البريد الإلكتروني" autoCapitalize="none" autoComplete="email"
-                     keyboardType="email-address" value={email} onChangeText={setEmail} accessibilityLabel="البريد الإلكتروني" />
+          <TextInput style={s.input} placeholder="البريد الإلكتروني أو اسم المستخدم" autoCapitalize="none" autoCorrect={false}
+                     autoComplete="username" value={email} onChangeText={setEmail} accessibilityLabel="البريد الإلكتروني أو اسم المستخدم" />
           <TextInput style={s.input} placeholder="كلمة المرور" secureTextEntry autoComplete="current-password"
                      value={password} onChangeText={setPassword} accessibilityLabel="كلمة المرور" />
           {needTotp && (

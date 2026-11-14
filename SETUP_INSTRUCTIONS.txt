@@ -1,6 +1,17 @@
 GUARDIAN - SETUP INSTRUCTIONS (private family use, Vercel + Neon)
 ===================================================================
 
+What works today
+----------------
+- Remote lock of your child's Android phone (30 min / 1 hour / until you
+  unlock), with a message your child sees on the lock screen.
+- Family accounts: add your father, spouse, etc. with their own login.
+- Alerts from your child's Gmail (optional, needs a Google setup - see
+  guardian/docs, checked once a day on Vercel's free plan).
+- NOT yet on the phone: reading messages, location, web filtering, screen-time
+  schedules, app limits. The dashboard marks those settings with a warning.
+
+
 What you get
 ------------
 - Parent dashboard (website)        -> runs on Vercel
@@ -127,6 +138,25 @@ STEP 8 - Test the lock
 2. Within about 30 seconds the phone locks and shows the message on the
    lock screen. Emergency calls still work.
 3. Click "فتح القفل" (unlock) to unlock.
+
+
+STEP 9 - Add a family member (for example your father)
+-----------------------------------------------------
+1. Dashboard -> "الحساب والإعدادات" (Account) -> section "العائلة" (Family).
+2. Fill in:
+     الاسم (Name)                      -> e.g. بابا
+     اسم المستخدم للدخول (Username)    -> e.g. baba
+     كلمة المرور (Password)            -> the password you chose for him
+   and click "إضافة" (Add).
+3. He opens YOUR DASHBOARD ADDRESS on his phone or computer and signs in with
+   the username (not an email) and that password.
+4. He sees the children, alerts and the lock button, and gets the same
+   notifications. He cannot add or remove family members or delete a child.
+5. Forgot his password? Same section -> "تغيير كلمة المرور" (Change password).
+   To remove access: "إزالة" (Remove).
+
+Tip: a password made of a birth date and a name is easy to guess. Use a
+longer, random one if you can, and turn on two-step login for your own account.
 
 
 Good to know

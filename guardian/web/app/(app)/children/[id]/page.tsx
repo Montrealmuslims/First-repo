@@ -66,6 +66,8 @@ export default async function ChildPage({ params, searchParams }: {
 async function AlertsTab({ id, status }: { id: string; status?: string }) {
   const filter = status === 'all' ? '' : `?status=${status ?? 'new'}`;
   const { alerts } = await api<{ alerts: AlertSummary[] }>(`/children/${id}/alerts${filter}`);
+  // Alerts come from linked Gmail or a future child-app version; the current
+  // child app only handles the remote lock.
   const filters = { new: 'الجديدة', viewed: 'تمت مشاهدتها', resolved: 'المعالجة', all: 'الكل' };
   return (
     <div className="card">
@@ -76,6 +78,7 @@ async function AlertsTab({ id, status }: { id: string; status?: string }) {
         ))}
       </div>
       <AlertList alerts={alerts} />
+      <p className="muted small">التنبيهات تأتي من حساب Gmail المرتبط (تبويب «الحسابات»). تطبيق الطفل الحالي لا يحلّل رسائل الهاتف؛ يدعم قفل الجهاز فقط.</p>
     </div>
   );
 }
@@ -95,7 +98,7 @@ async function LocationTab({ id }: { id: string }) {
               {' · '}<a href={`https://www.google.com/maps?q=${loc.latest.lat},${loc.latest.lng}`} target="_blank" rel="noreferrer">فتح في الخرائط</a>
             </p>
           </>
-        ) : <p className="muted">لا يوجد موقع بعد. تأكد من ربط الجهاز ومنح إذن الموقع.</p>}
+        ) : <p className="muted">لا يوجد موقع. تطبيق الطفل الحالي لا يرسل الموقع بعد (يدعم قفل الجهاز فقط).</p>}
       </div>
       <div className="card">
         <h3>الوصول والمغادرة</h3>

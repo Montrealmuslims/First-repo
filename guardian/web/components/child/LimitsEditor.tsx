@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { call } from '@/lib/client';
 import type { DailyLimit } from '@/lib/types';
 import { useAction } from '../useAction';
+import { NotYetOnDevice } from '../NotYetOnDevice';
 
 const COMMON_APPS: Record<string, string> = {
   'com.zhiliaoapp.musically': 'TikTok', 'com.instagram.android': 'Instagram', 'com.snapchat.android': 'Snapchat',
@@ -27,6 +28,7 @@ export function LimitsEditor({ childId, limits: initial }: { childId: string; li
   return (
     <div className="card">
       <h3>حدود يومية للتطبيقات (Android)</h3>
+      <NotYetOnDevice />
       {limits.length > 0 && (
         <ul className="list">
           {limits.map((l) => (

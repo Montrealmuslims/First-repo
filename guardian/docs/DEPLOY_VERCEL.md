@@ -78,6 +78,10 @@ In the **API** project → Settings → Environment Variables → set `WEB_APP_U
 
 Tip: tell your child what the app does. It shows them the same thing on its own screen.
 
+## 7. Add family members (e.g. a grandparent)
+
+Dashboard → **Account** → **العائلة (Family)** → name, a **username** (no email needed) and a password → **إضافة**. They sign in on the same dashboard with that username. Members see the children, alerts and the lock button and get the same notifications, but can't manage the family or delete a child. You can reset their password or remove them from the same section.
+
 ## Good to know
 
 - **Use the production address** (`<project>.vercel.app` or your own domain) everywhere, not a preview-deployment URL: previews are protected by Vercel login and change on every push.
@@ -85,5 +89,6 @@ Tip: tell your child what the app does. It shows them the same thing on its own 
 - **Parent app on your phone:** the Expo app needs an EAS build to install. Easiest for now: open the dashboard in your phone's browser and *Add to Home Screen*.
 - **Lock delay:** up to ~30 s while the child's screen is on; immediately when they turn the screen on.
 - **Not tamper-proof:** the child can turn off the screen-lock permission and uninstall. You'll see a red warning on the lock card and the device's *last seen* time stops updating. For stronger control add Google Family Link (free), which can block uninstalling.
-- **Gmail monitoring** is not active on Vercel's free plan (it needs a job every few minutes; free cron runs daily).
+- **Gmail monitoring** (optional) is checked once a day on Vercel's free plan (`/api/cron/gmail-sync`). It needs a Google Cloud OAuth client: set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `GOOGLE_REDIRECT_URI=https://<api>/v1/oauth/gmail/callback`.
+- **What the child app does today:** the remote lock only. Location, message analysis, web filtering, schedules and app limits are saved in the dashboard but not enforced on the phone yet; the dashboard says so next to each.
 - **Updating:** push to GitHub → Vercel redeploys both projects automatically; new migrations run on deploy.

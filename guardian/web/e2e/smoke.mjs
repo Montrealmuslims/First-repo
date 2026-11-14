@@ -139,8 +139,30 @@ await m.screenshot({ path: `${out}/14-mobile-alerts.png`, fullPage: true });
 const overflow = await m.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
 console.log('   mobile horizontal overflow:', overflow);
 
+step('family: add a member with a username, then sign in as them');
+const member = `jaddo${Date.now() % 1_000_000}`; // usernames are unique per server
+await page.goto(`${WEB}/account`);
+await page.fill('#fm-name', 'جدّو');
+await page.fill('#fm-user', member);
+await page.fill('#fm-pass', 'jaddo-test-pass');
+await page.click('form:has(#fm-user) button[type=submit]');
+await page.getByText('تمت الإضافة').waitFor();
+await shot('15-family');
+
 step('logout');
 await page.goto(WEB);
+await page.click('text=تسجيل الخروج');
+await page.waitForURL('**/login');
+
+step('member login with username');
+await page.fill('#email', member);
+await page.fill('#password', 'jaddo-test-pass');
+await page.click('button[type=submit]');
+await page.getByText('سارة').first().waitFor();
+await shot('16-member-home');
+await page.goto(`${WEB}/account`);
+await page.getByText('فرد من العائلة').first().waitFor();
+if (await page.locator('#fm-user').count()) throw new Error('member should not see the add-member form');
 await page.click('text=تسجيل الخروج');
 await page.waitForURL('**/login');
 console.log('console errors:', errors.length ? errors : 'none');

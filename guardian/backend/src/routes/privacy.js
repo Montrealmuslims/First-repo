@@ -25,7 +25,7 @@ export function privacyRouter({ fieldCrypto }) {
 
     const exported = {
       exportedAt: new Date().toISOString(),
-      parent: (await q('SELECT id, email, full_name, locale, mfa_enabled, created_at FROM parents WHERE id = $1'))[0],
+      parent: (await q('SELECT id, email, username, full_name, locale, mfa_enabled, created_at FROM parents WHERE id = $1'))[0],
       families: await q('SELECT * FROM families WHERE id = ANY($1)', [familyIds]),
       children,
       consents: await byChild('SELECT id, child_id, parent_id, policy_version, scopes, method, child_notified, granted_at, revoked_at FROM consents WHERE child_id = ANY($1)'),
@@ -64,7 +64,7 @@ export function privacyRouter({ fieldCrypto }) {
       }
       await db.query('UPDATE parent_sessions SET revoked_at = now(), push_token = NULL WHERE parent_id = $1', [req.parent.id]);
       await db.query(
-        `UPDATE parents SET email = 'deleted+' || id || '@invalid', full_name = 'deleted', password_hash = '!',
+        `UPDATE parents SET email = 'deleted+' || id || '@invalid', username = NULL, full_name = 'deleted', password_hash = '!',
                 mfa_secret_enc = NULL, mfa_enabled = false, deleted_at = now() WHERE id = $1`,
         [req.parent.id],
       );
